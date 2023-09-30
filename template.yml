@@ -1,18 +1,31 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: A serverless component for transcribing from MP3, MP4, WAV, FLAC to Text
+Description: A serverless component for transcribing from MP3 to Text
 Parameters:
   LanguageCode:
     Type: String
-    Description: 'The language code of your audio file'
-    AllowedValues : ['en-US','es-US','en-AU','fr-CA','en-GB','de-DE','pt-BR','fr-FR','it-IT','ko-KR','es-ES']
+    Description: "The language code of your audio file"
+    AllowedValues:
+      [
+        "en-US",
+        "es-US",
+        "en-AU",
+        "fr-CA",
+        "en-GB",
+        "de-DE",
+        "pt-BR",
+        "fr-FR",
+        "it-IT",
+        "ko-KR",
+        "es-ES",
+      ]
   InputS3BucketName:
     Type: String
-    Default: 's3-lambda-transcribe-input-audio-bucket'
+    Default: "s3-lambda-transcribe-input-audio-bucket"
     MinLength: 3
   OutputS3BucketName:
     Type: String
-    Default: 's3-lambda-transcribe-output-text-bucket'
+    Default: "s3-lambda-transcribe-output-text-bucket"
     MinLength: 3
 Resources:
   InputS3Bucket:
@@ -25,18 +38,18 @@ Resources:
       Handler: index.handler
       Timeout: 30
       MemorySize: 1024
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       CodeUri: src/
       Policies:
-      - S3CrudPolicy:
-          BucketName: !Ref OutputS3BucketName
-      - S3ReadPolicy:
-          BucketName: !Ref InputS3BucketName
-      - Statement:
-          - Effect: Allow
-            Action:
-              - 'transcribe:StartTranscriptionJob'
-            Resource: '*'
+        - S3CrudPolicy:
+            BucketName: !Ref OutputS3BucketName
+        - S3ReadPolicy:
+            BucketName: !Ref InputS3BucketName
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "transcribe:StartTranscriptionJob"
+              Resource: "*"
       Environment:
         Variables:
           OUTPUT_BUCKET: !Ref OutputS3Bucket
